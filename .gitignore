@@ -30,8 +30,16 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# IDE
-.idea/
+# IDE — VS Code (미사용, WebStorm으로 작업)
+.vscode/
+
+# IDE — JetBrains
+# 머신 종속 파일은 제외하고, PC 간 공유할 가치가 있는 설정만 커밋한다.
+.idea/*
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
+!.idea/jsLinters/
+!.idea/vcs.xml
 
 # local env files
 .env*.local
