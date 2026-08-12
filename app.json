@@ -3,7 +3,7 @@
     "name": "rn-practice",
     "slug": "rn-practice",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "rnpractice",
     "userInterfaceStyle": "automatic",
