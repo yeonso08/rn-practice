@@ -19,6 +19,9 @@ export default function AppTabs() {
           <TabTrigger name="scroll" href="/scroll" asChild>
             <TabButton label="Scroll" icon={require('@/assets/images/tabIcons/explore.png')} />
           </TabTrigger>
+          <TabTrigger name="api" href="/api" asChild>
+            <TabButton label="API" icon={require('@/assets/images/tabIcons/explore.png')} />
+          </TabTrigger>
         </TabList>
       </Tabs>
     </SafeAreaView>
