@@ -10,14 +10,24 @@
 
 | 항목 | 값 |
 |---|---|
-| **현재 Day** | Day 6 — expo-router 기초 (1주차 완료, 2주차 시작) |
-| **상태** | 1주차(Day1~5) 전부 완료 및 리뷰 통과 |
+| **현재 Day** | Day 9 — 폼과 키보드 (진행 중) |
+| **상태** | Day 6~8 완료. Day 9는 **미완료** — 예시 코드(2필드)만 복사해둔 상태, 5필드 요구사항 미달 |
 | **마지막 갱신** | 2026-08-18 |
-| **다음 할 일** | Day 6 개념 설명부터 시작 |
+| **다음 할 일** | `src/app/form.tsx`에 필드 3개 더 추가(나이/비밀번호/자기소개 등), `KeyboardAvoidingView` iOS/Android 양쪽 확인 |
 
-`src/app/explore.tsx` = 프로필 카드 + HUD absolute 오버레이 + expo-image(원격/로컬) + useFonts.
-`src/app/scroll.tsx` = FlatList 200개 로그 + 당겨서 새로고침 + 무한스크롤.
-`src/app/index.tsx`는 아직 초기 테스트 상태(`dd`) — 이후 Day에서 채울 것.
+**라우트 구조가 Day 7에서 크게 바뀜** — `NativeTabs`가 탭 내부 중첩 스택 push를 처리 못 해서 구조 변경:
+```
+src/app/
+  _layout.tsx        ← 루트 Stack (QueryClientProvider도 여기)
+  (tabs)/_layout.tsx  ← 안정판 Tabs (expo-router/ui), NativeTabs 아님
+  (tabs)/index.tsx, explore.tsx, scroll.tsx, api.tsx
+  log/[id].tsx        ← scroll 목록의 상세화면 (루트 Stack)
+  modal.tsx           ← 상세화면에서 여는 모달
+  form.tsx            ← Day9 진행중, explore.tsx에서 <Form/>으로 렌더
+```
+`explore.tsx` = 프로필 카드 + HUD absolute 오버레이 + expo-image + useFonts + (임시) Form.
+`scroll.tsx` = FlatList 200개 로그 + 당겨새로고침 + 무한스크롤 + 상세화면 링크.
+`api.tsx` = TanStack Query로 API 로딩/에러/재시도/오프라인캐시.
 
 > ⚠️ **튜터에게**: 사용자가 설명이 길면 힘들어합니다. **짧고 간결하게** 답할 것.
 > 표·비유 남발하지 말고 결론부터. 물어본 것만 답하기.
@@ -33,6 +43,8 @@
 - **Day 3**: `SafeAreaView`(빈 태그로 넣으면 무효 — 자식을 감싸야 함), `Platform.select`로 테두리색 분기, iOS/Android 그림자 속성 둘 다 명시.
 - **Day 4**: `FlatList` + `RefreshControl`(`refreshing`/`onRefresh` 내장) + `onEndReached` 무한스크롤. `renderItem` 인라인 함수는 지금 스케일에선 괜찮지만 원칙적으로 `useCallback` 권장.
 - **Day 5**: `expo-image`(RN 기본 `Image` 대체, `source`/`contentFit`이 각각 다른 자리), `useFonts` 로딩 게이팅(`if (!loaded) return null`). **디버깅 교훈**: 화면 요소가 안 보일 때 레이아웃(스크롤 없이 화면 밖으로 밀림)과 색상(흰 로고+흰 배경) 둘 다 의심할 것.
+- **Day 6~7**: expo-router 파일기반 라우팅, `[id].tsx` 동적라우트, `useLocalSearchParams`. **큰 사건**: `NativeTabs`(`expo-router/unstable-native-tabs`)가 탭 안에서 중첩 스택으로 `push`(둘 다 `Link`/`router.push` 다 실패, 터치 자체는 정상)를 못 넘기는 프레임워크 레벨 문제 발견 → 루트 `Stack` + `(tabs)` 라우트그룹 구조로 변경, 탭 구현도 안정판 `Tabs`(`expo-router/ui`)로 교체.
+- **Day 8**: TanStack Query. `onlineManager`↔`NetInfo`, `focusManager`↔`AppState` 연결 필요(웹은 `window`/`navigator` 이벤트로 자동, RN은 수동 배선). 에러 나도 이전 `data`는 캐시에 남아있어서 그대로 보여주면 오프라인 대응이 됨.
 
 ---
 
@@ -59,6 +71,16 @@
 - `FlatList`: `refreshing`/`onRefresh`로 당겨새로고침 내장 지원(별도 `RefreshControl` 컴포넌트로 안 감싸도 됨). `onEndReached`+`onEndReachedThreshold`로 무한스크롤.
 - `expo-image`의 `source`(이미지 데이터)와 `contentFit`(맞춤 방식)은 `style`이 아니라 **별도 prop**. `width/height` 없으면 0크기.
 - 커스텀 폰트(`useFonts`)는 로딩이 진짜 비동기(디스크 파일이어도 OS 등록 과정이 필요) → 로드 전 렌더링하면 fallback 폰트로 잠깐 보였다가 바뀌는 레이아웃 튐 발생 → `if (!loaded) return null`로 게이팅.
+
+### Day 6~9
+
+- `NativeTabs`는 신규 프로젝트 템플릿 기본값일 뿐 실무 표준 아님(`unstable-` 접두사). 안정적인 건 `expo-router/ui`의 `Tabs`/`TabList`/`TabTrigger`/`TabSlot`.
+- 탭+상세/모달 조합은 **루트 `Stack` 하나 + `(tabs)` 라우트그룹**으로 짜는 게 표준 패턴. 상세화면 push를 탭 내부가 아니라 루트 Stack에서 하면 이런 종류의 네비게이션 문제를 원천적으로 피함.
+- `(폴더명)` 라우트 그룹은 URL에 안 나타남 — 레이아웃만 공유하고 싶을 때.
+- react-hook-form의 `Controller`: RN `TextInput`은 웹 `<input>`처럼 `ref`/`name`으로 바로 제어가 안 돼서 필요한 어댑터.
+- `KeyboardAvoidingView`의 `behavior`는 iOS `"padding"`, Android `"height"`로 다르게(`Platform.OS` 삼항연산자로 처리).
+- `axios`는 RN에서도 문제없이 동작(웹 전용 아님, RN의 XHR 폴리필 위에서 돎). `fetch`는 4xx/5xx도 reject 안 하고 resolve됨 → `res.ok` 직접 체크 필요, `axios`는 기본으로 에러 처리해줌.
+- **근본 질문 "왜 View/Text를 import해야 하나"**: 웹의 `<div>`는 브라우저가 아는 고정 키워드, RN의 `<View>`는 그냥 평범한 JS 컴포넌트(네이티브 뷰를 감싼 모듈) — HTML 태그처럼 확장 불가능한 고정 스펙이 아니라 라이브러리라서 import 필요.
 
 ### 도구·환경 (Day 1에서 실제로 겪은 것)
 

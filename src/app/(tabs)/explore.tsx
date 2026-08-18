@@ -3,6 +3,7 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import { Image } from 'expo-image';
 import { useFonts } from 'expo-font';
 import { Inter_700Bold } from '@expo-google-fonts/inter';
+import Form from "@/app/form";
 
 export default function Explore() {
    const [fontsLoaded] = useFonts({ Inter_700Bold });
@@ -37,6 +38,7 @@ export default function Explore() {
                 style={styles.localImage}
                 contentFit="contain"
              />
+             <Form />
           </ScrollView>
        </SafeAreaView>
    );
