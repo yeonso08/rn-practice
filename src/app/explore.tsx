@@ -1,38 +1,62 @@
-import {View, Text, StyleSheet, Pressable, Platform} from 'react-native';
+import {View, Text, StyleSheet, Pressable, Platform, ScrollView} from 'react-native';
 import {SafeAreaView} from "react-native-safe-area-context";
+import { Image } from 'expo-image';
+import { useFonts } from 'expo-font';
+import { Inter_700Bold } from '@expo-google-fonts/inter';
 
 export default function Explore() {
+   const [fontsLoaded] = useFonts({ Inter_700Bold });
+
+   if (!fontsLoaded) {
+      return null;
+   }
+
    return (
-       <SafeAreaView style={styles.container}>
-          <Text style={styles.title}>프로필 카드</Text>
-          <View style={styles.card}>
-             <Text style={styles.cardName}>테스트</Text>
-             <Text style={styles.cardContent}>안녕하세요, 잘부탁드립니다.</Text>
-             <Pressable style={({pressed}) => [styles.button, pressed && styles.buttonPressed]} onPress={(event) => {console.log("연락처")}}><Text>연락하기</Text></Pressable>
-          </View>
-          <View style={styles.hudBg}>
-             <Text style={styles.hudLeft}>왼쪽</Text>
-             <Text style={styles.hudRight}>오른쪽</Text>
-             <Text style={styles.hudCenter}>중앙</Text>
-             <Text style={styles.hudZIndex}>아래 중앙</Text>
-          </View>
+       <SafeAreaView style={styles.safeArea}>
+          <ScrollView contentContainerStyle={styles.container}>
+             <Text style={styles.title}>프로필 카드</Text>
+             <View style={styles.card}>
+                <Text style={styles.cardName}>테스트</Text>
+                <Text style={styles.cardContent}>안녕하세요, 잘부탁드립니다.</Text>
+                <Pressable style={({pressed}) => [styles.button, pressed && styles.buttonPressed]} onPress={(event) => {console.log("연락처")}}><Text>연락하기</Text></Pressable>
+             </View>
+             <View style={styles.hudBg}>
+                <Text style={styles.hudLeft}>왼쪽</Text>
+                <Text style={styles.hudRight}>오른쪽</Text>
+                <Text style={styles.hudCenter}>중앙</Text>
+                <Text style={styles.hudZIndex}>아래 중앙</Text>
+             </View>
+             <Image
+                source={{uri: 'https://picsum.photos/seed/rn-practice/600/400'}}
+                style={styles.remoteImage}
+                contentFit="cover"
+                transition={300}
+             />
+             <Image
+                source={require('@/assets/images/react-logo.png')}
+                style={styles.localImage}
+                contentFit="contain"
+             />
+          </ScrollView>
        </SafeAreaView>
    );
 }
 
 const styles = StyleSheet.create({
-   container: {
+   safeArea: {
       flex: 1,
-      padding: 18,
       backgroundColor: '#fff',
+   },
+   container: {
+      padding: 18,
       gap: 16
    },
    title: {
       fontSize: 20,
-      fontWeight: 'bold',
+      fontFamily: 'Inter_700Bold',
    },
    hudBg: {
-      flex: 1,
+      height: 200,
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
    },
    hudRight: {
@@ -86,5 +110,14 @@ const styles = StyleSheet.create({
    },
    buttonPressed: {
       backgroundColor: 'blue',
-   }
+   },
+   remoteImage: {
+      width: '100%',
+      height: 180,
+      borderRadius: 8,
+   },
+   localImage: {
+      width: 100,
+      height: 100,
+   },
 });
