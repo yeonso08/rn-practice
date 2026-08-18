@@ -1,8 +1,9 @@
-import {View, Text, StyleSheet, Pressable} from 'react-native';
+import {View, Text, StyleSheet, Pressable, Platform} from 'react-native';
+import {SafeAreaView} from "react-native-safe-area-context";
 
 export default function Explore() {
    return (
-       <View style={styles.container}>
+       <SafeAreaView style={styles.container}>
           <Text style={styles.title}>프로필 카드</Text>
           <View style={styles.card}>
              <Text style={styles.cardName}>테스트</Text>
@@ -15,7 +16,7 @@ export default function Explore() {
              <Text style={styles.hudCenter}>중앙</Text>
              <Text style={styles.hudZIndex}>아래 중앙</Text>
           </View>
-       </View>
+       </SafeAreaView>
    );
 }
 
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
       zIndex: 100,
    },
    card: {
-      borderColor: 'red',
+      borderColor: Platform.select({ ios: 'blue', android: 'green' }),
       borderWidth: 1,
       padding: 16,
       width: '33%'
@@ -77,6 +78,11 @@ const styles = StyleSheet.create({
       padding: 16,
       borderRadius: 8,
       alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+      elevation: 5,
    },
    buttonPressed: {
       backgroundColor: 'blue',
