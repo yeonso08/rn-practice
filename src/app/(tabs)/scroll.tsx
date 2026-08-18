@@ -1,17 +1,18 @@
-import { FlatList, Text, View, StyleSheet } from 'react-native';
+import {FlatList, Text, View, StyleSheet} from 'react-native';
 import { generateLogs, LogEntry } from '@/lib/mock-logs';
 import { useState } from 'react';
 import {SafeAreaView} from "react-native-safe-area-context";
+import {Link} from "expo-router";
 
 export default function Scroll() {
     const [logs, setLogs] = useState<LogEntry[]>(generateLogs(200));
     const [refreshing, setRefreshing] = useState(false);
 
     const renderItem = ({ item }: { item: LogEntry }) => (
-        <View style={styles.row}>
+        <Link href={`/log/${item.id}`} style={styles.row}>
             <Text style={styles.time}>{item.time}</Text>
             <Text>{item.message}</Text>
-        </View>
+        </Link>
     );
 
     const onRefresh = () => {
@@ -27,15 +28,15 @@ export default function Scroll() {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-        <FlatList
-            data={logs}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            onEndReached={onEndReached}
-            onEndReachedThreshold={0.5}
-        />
+            <FlatList
+                data={logs}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                onEndReached={onEndReached}
+                onEndReachedThreshold={0.5}
+            />
         </SafeAreaView>
     );
 }
